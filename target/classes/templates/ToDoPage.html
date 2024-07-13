@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #E9E085;
+            color: 635D22;
+            padding: 10px 20px;
+        }
+        .header .app-title {
+            font-size: 24px;
+        }
+        .header .logout-button {
+            background-color: #d32f2f;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .header .logout-button:hover {
+            background-color: #d32f2f;
+        }
+        .container {
+            padding: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 15px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .action-button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 2px;
+        }
+        .edit-button {
+            background-color: #ff9800;
+            color: white;
+        }
+        .edit-button:hover {
+            background-color: #e68900;
+        }
+        .delete-button {
+            background-color: #f44336;
+            color: white;
+        }
+        .delete-button:hover {
+            background-color: #d32f2f;
+        }
+        .complete-button {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .complete-button:hover {
+            background-color: #45a049;
+        }
+        .add-task-button{
+            padding: 15px 20px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 20px;
+            margin: 20px;
+            background-color: #4CAF50;
+            color: white;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="app-title">To-Do App</div>
+        <button class="logout-button"  th:onclick="|window.location.href='@{/}'|">Logout</button>
+    </div>
+    <div class="add-button">
+        <button class="action-button add-task-button" th:onclick="|window.location.href='@{/ToDoPage/addTask}'|">Add task</button>
+    </div>
+    <div class="container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Sr No.</th>
+                    <th>Task</th>
+                    <th>Created On</th>
+                    <th>Completed On</th>
+                    <th>Task Description</th>
+                    <th>Other Options</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="task, iterStat : ${tasks}">
+                    <td th:text="${iterStat.index + 1}">1</td>
+                    <td th:text="${task.task_name}">Sample Task</td>
+                    <td th:text="${task.Created_On}">2024-07-12</td>
+                    <td>
+                        <span th:if="${task.Completed_On == null}">
+                            <button class="action-button complete-button" th:onclick="|window.location.href='@{/ToDoPage/completed/{id}(id=${task.id})}'|">Completed</button>
+                        </span>
+                        <span th:if="${task.Completed_On != null}" th:text="${task.Completed_On}">2024-07-13</span>
+                    </td>
+                    <td th:text="${task.taskDetail}">sample description</td>
+                    <td>
+                        <button class="action-button edit-button" th:onclick="|window.location.href='@{/ToDoPage/edit/{id}(id=${task.id})}'|">Edit</button>
+                        <button class="action-button delete-button" th:onclick="|window.location.href='@{/ToDoPage/delete/{id}(id=${task.id})}'|">Delete</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+</body>
+</html>
