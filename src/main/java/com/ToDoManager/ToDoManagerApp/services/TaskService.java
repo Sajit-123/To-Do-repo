@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import com.ToDoManager.ToDoManagerApp.model.Tasks;
+import com.ToDoManager.ToDoManagerApp.model.Users;
 import com.ToDoManager.ToDoManagerApp.repositories.TaskRepository;
 
 
@@ -32,7 +33,8 @@ public class TaskService {
         return taskRepository.findById(id);
     }
 
-    // public List<Tasks> getAllTaskByUserId(){
-    //     return taskRepository.findAllById();
-    // }
+    public List<Tasks> getAllTaskByUserId(Users currentUser){
+        return taskRepository.getAllTaskByfkUserId(currentUser);
+    }
+
 }

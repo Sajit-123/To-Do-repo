@@ -1,8 +1,8 @@
 package com.ToDoManager.ToDoManagerApp.controllers;
 
-
-
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 import org.springframework.stereotype.Controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,6 +14,7 @@ import com.ToDoManager.ToDoManagerApp.repositories.UserRepository;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
 
 @Controller
@@ -34,7 +35,7 @@ public class LoginController {
     
     @GetMapping("/login")
     public String login(){
-        return "login";
+        return "login"; 
     }
 
     @GetMapping("/register")
@@ -44,6 +45,12 @@ public class LoginController {
 
     @PostMapping("/register")
     public String registrationPosat(@ModelAttribute("user") Users user,HttpServletRequest httpServletRequest) throws ServletException{
+        HttpSession session = httpServletRequest.getSession(false);
+        if (session != null) {
+            session.invalidate();
+        }
+        SecurityContextHolder.clearContext();
+
         String password = user.getPassword();
         user.setPassword(bCryptPasswordEncoder.encode(password));
         userRepository.save(user);

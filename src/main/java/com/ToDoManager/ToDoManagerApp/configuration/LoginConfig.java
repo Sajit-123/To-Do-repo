@@ -13,6 +13,7 @@ import org.springframework.security.config.annotation.web.configurers.HeadersCon
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import com.ToDoManager.ToDoManagerApp.services.UserDetailService;
 
@@ -38,6 +39,16 @@ public class LoginConfig{
         .defaultSuccessUrl("/ToDoPage")
         .usernameParameter("email")
         .passwordParameter("password"))
+        .sessionManagement(session -> session
+        .sessionFixation().newSession()
+        .maximumSessions(1)
+        .maxSessionsPreventsLogin(true)
+        .expiredUrl("/login?expired=true"))
+        .logout(logout -> logout
+        .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+        .logoutSuccessUrl("/")
+        .invalidateHttpSession(true)
+        .deleteCookies("JSESSIONID"))
         .headers(headers -> headers.frameOptions(FrameOptionsConfig::disable))
                 .csrf(csrf -> csrf
                         .ignoringRequestMatchers("/h2-console/**")); 

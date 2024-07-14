@@ -18,7 +18,7 @@ public class Users {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    // @Column(name = "user_id")
+    @Column(name = "user_id")
     private int id;
 
     @NotEmpty

@@ -4,8 +4,6 @@ package com.ToDoManager.ToDoManagerApp.controllers;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
-
-
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,19 +12,25 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import com.ToDoManager.ToDoManagerApp.model.Tasks;
+import com.ToDoManager.ToDoManagerApp.model.Users;
 import com.ToDoManager.ToDoManagerApp.services.TaskService;
 
+import com.ToDoManager.ToDoManagerApp.services.UserService;
 
-
-
+import jakarta.servlet.http.HttpServletRequest;
 
 @Controller
 public class TaskController {
 
     private TaskService taskService;
+    private UserService userService;
 
-    public TaskController(TaskService taskService) {
+    private HttpServletRequest httpServletRequest;
+
+    public TaskController(TaskService taskService,UserService userService,HttpServletRequest httpServletRequest) {
         this.taskService = taskService;
+        this.userService = userService;
+        this.httpServletRequest = httpServletRequest;
     }
 
     @GetMapping("/ToDoPage/addTask")
@@ -36,22 +40,24 @@ public class TaskController {
     }
     
     @PostMapping("/ToDoPage/addTask")
-    public String addingTasks(@RequestParam("taskName") String taskName,@RequestParam("taskDetails") String taskDetails,Tasks tasks){
+    public String addingTasks(@RequestParam("taskName") String taskName,@RequestParam("taskDetails") String taskDetails, Tasks tasks){
+        Users currentUser = userService.getUserByName(httpServletRequest.getRemoteUser()).get();
         LocalDateTime now = LocalDateTime.now();  
         DateTimeFormatter format = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");  
         String formatDateTime = now.format(format);  
         tasks.setCreated_On(formatDateTime);
         tasks.setTask_name(taskName);
         tasks.setTaskDetail(taskDetails);
+        tasks.setFkUserId(currentUser);
         taskService.addTask(tasks);
         return "redirect:/ToDoPage";
     }
 
 
-
     @GetMapping("/ToDoPage")
     public String loggedIn(Model model) {
-        model.addAttribute("tasks", taskService.getAllTasks());
+        Users currentUserId = userService.getUserByName(httpServletRequest.getRemoteUser()).get();
+        model.addAttribute("tasks", taskService.getAllTaskByUserId(currentUserId));
         return "ToDoPage";
     }
 
@@ -73,6 +79,7 @@ public class TaskController {
 
     @GetMapping("/ToDoPage/delete/{id}")
     public String deleTask(@PathVariable int id){
+        System.out.println(id);
         taskService.delTaskById(id);
         return "redirect:/ToDoPage";
     }
